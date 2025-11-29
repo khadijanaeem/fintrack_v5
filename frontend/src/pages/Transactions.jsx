@@ -66,33 +66,48 @@ const Transactions = () => {
     date: '',
     type: 'expense'
   });
-  // Fetch transactions from API
-const fetchTransactions = async () => {
+  const fetchTransactions = async () => {
   try {
     setLoading(true);
-    const response = await fetch('http://localhost:5000/api/transactions');
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch transactions');
-    }
-    
-    const data = await response.json();
-    
-    // Transform the data to match your frontend structure
-    const transformedTransactions = data.map(transaction => ({
-      id: transaction._id,
-      date: new Date(transaction.date).toISOString().split('T')[0], // Format date to YYYY-MM-DD
-      description: transaction.description,
-      category: transaction.categoryId ? transaction.categoryId.name : 'Uncategorized',
-      amount: transaction.type === 'expense' ? -Math.abs(transaction.amount) : Math.abs(transaction.amount),
-      type: transaction.type
-    }));
-    
-    setTransactions(transformedTransactions);
     setError(null);
-  } catch (err) {
-    setError('Failed to load transactions. Please try again later.');
-    console.error('Error fetching transactions:', err);
+    
+    const response = await fetch('http://localhost:5000/api/transactions', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const backendTransactions = await response.json();
+    
+    console.log('📦 Raw backend data:', backendTransactions);
+    
+    // Transform backend data to match frontend format
+    const transformedTransactions = backendTransactions.map(transaction => {
+      // Convert amount: positive for income, negative for expense
+      const amount = transaction.type === 'income' 
+        ? Math.abs(transaction.amount) 
+        : -Math.abs(transaction.amount);
+      
+      return {
+        id: transaction._id,
+        date: new Date(transaction.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
+        description: transaction.description,
+        category: transaction.categoryId ? `Category-${transaction.categoryId}` : 'General',
+        amount: amount,
+        type: transaction.type
+      };
+    });
+
+    console.log('🔄 Transformed data:', transformedTransactions);
+    setTransactions(transformedTransactions);
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
+    setError('Failed to fetch transactions. Please check if the server is running.');
   } finally {
     setLoading(false);
   }
@@ -160,7 +175,8 @@ const handleSubmit = async (e) => {
       description: newTransaction.description,
       type: newTransaction.type,
       date: new Date(newTransaction.date).toISOString(),
-      categoryId: newTransaction.category
+      categoryId: newTransaction.category,
+       userId: "65a1b2c3d4e5f67890123456"
     };
 
     const response = await fetch('http://localhost:5000/api/transactions', {

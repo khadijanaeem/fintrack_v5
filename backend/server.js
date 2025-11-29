@@ -1,8 +1,8 @@
 
 const express = require('express');
-
 const mongoose = require('mongoose');
 const cors = require('cors');
+
 require('dotenv').config();
 
 const app = express();
@@ -23,7 +23,7 @@ const connectDB = async () => {
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
     console.log('Please check your Atlas connection string in .env file');
-    process.exit(1); // Stop the server if DB connection fails
+    process.exit(1); 
   }
 };
 
@@ -32,7 +32,7 @@ connectDB();
 // Routes
 app.use('/api/transactions', require('./routes/transactions'));
 app.use('/api/dashboard', require('./routes/dashboard'));
-
+app.use('/api/budgets', require('./routes/budget'));
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

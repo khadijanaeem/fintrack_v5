@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Doughnut, Bar, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -26,35 +26,185 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  const dashboardData = {
+  const [dashboardData, setDashboardData] = useState({
     summary: {
-      totalBalance: 12500.75,
-      totalIncome: 8500.00,
-      totalExpenses: 3250.25,
-      monthlySavings: 5249.75
+      totalBalance: 0,
+      totalIncome: 0,
+      totalExpenses: 0,
+      monthlySavings: 0
     },
-    recentTransactions: [
-      { id: 1, description: 'Grocery Store', amount: -85.50, date: '2024-01-15', type: 'expense' },
-      { id: 2, description: 'Salary', amount: 2500.00, date: '2024-01-14', type: 'income' },
-      { id: 3, description: 'Electricity Bill', amount: -120.75, date: '2024-01-13', type: 'expense' },
-      { id: 4, description: 'Freelance Work', amount: 800.00, date: '2024-01-12', type: 'income' }
-    ],
-    spendingByCategory: {
-      Food: 450.00,
-      Transportation: 280.50,
-      Utilities: 320.75,
-      Entertainment: 150.25,
-      Shopping: 420.00,
-      Healthcare: 95.00,
-      Other: 1533.75
-    },
+    recentTransactions: [],
+    spendingByCategory: {},
     monthlyTrend: {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      income: [2500, 2800, 3200, 3000, 3500, 4000, 3800, 4200, 4500, 4800, 5200, 5500],
-      expenses: [1800, 1950, 2200, 2100, 2300, 2500, 2400, 2600, 2800, 2700, 2900, 3000]
+      income: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      expenses: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    }
+  });
+  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch transactions and calculate dashboard data
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await fetch('http://localhost:5000/api/transactions');
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const backendTransactions = await response.json();
+      console.log('📊 Raw transactions for dashboard:', backendTransactions);
+      
+      // Transform and calculate dashboard data
+      const transformedData = calculateDashboardData(backendTransactions);
+      setDashboardData(transformedData);
+      
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      setError('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
     }
   };
 
+  // Calculate all dashboard metrics from transactions
+  const calculateDashboardData = (transactions) => {
+    if (!transactions || transactions.length === 0) {
+      return {
+        summary: { totalBalance: 0, totalIncome: 0, totalExpenses: 0, monthlySavings: 0 },
+        recentTransactions: [],
+        spendingByCategory: {},
+        monthlyTrend: {
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+          income: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          expenses: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        }
+      };
+    }
+
+    // Transform transactions to frontend format
+    const transformedTransactions = transactions.map(transaction => ({
+      id: transaction._id,
+      date: new Date(transaction.date).toISOString().split('T')[0],
+      description: transaction.description,
+      category: transaction.categoryId ? `Category-${transaction.categoryId}` : 'General',
+      amount: transaction.type === 'income' ? Math.abs(transaction.amount) : -Math.abs(transaction.amount),
+      type: transaction.type
+    }));
+
+    // Calculate summary
+    const totalIncome = transformedTransactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const totalExpenses = transformedTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    
+    const totalBalance = totalIncome - totalExpenses;
+    
+    // Calculate current month savings (simplified)
+    const currentMonth = new Date().getMonth();
+    const currentMonthTransactions = transformedTransactions.filter(t => {
+      const transactionMonth = new Date(t.date).getMonth();
+      return transactionMonth === currentMonth;
+    });
+    
+    const monthlyIncome = currentMonthTransactions
+      .filter(t => t.type === 'income')
+      .reduce((sum, t) => sum + t.amount, 0);
+    
+    const monthlyExpenses = currentMonthTransactions
+      .filter(t => t.type === 'expense')
+      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    
+    const monthlySavings = monthlyIncome - monthlyExpenses;
+
+    // Calculate spending by category
+    const spendingByCategory = {};
+    transformedTransactions
+      .filter(t => t.type === 'expense')
+      .forEach(transaction => {
+        spendingByCategory[transaction.category] = 
+          (spendingByCategory[transaction.category] || 0) + Math.abs(transaction.amount);
+      });
+
+    // Get recent transactions (last 4)
+    const recentTransactions = [...transformedTransactions]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 4);
+
+    // Calculate monthly trend (simplified - you might want to enhance this)
+    const monthlyTrend = calculateMonthlyTrend(transformedTransactions);
+
+    return {
+      summary: {
+        totalBalance,
+        totalIncome,
+        totalExpenses,
+        monthlySavings
+      },
+      recentTransactions,
+      spendingByCategory,
+      monthlyTrend
+    };
+  };
+
+  // Calculate monthly income/expense trends
+  const calculateMonthlyTrend = (transactions) => {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const incomeByMonth = Array(12).fill(0);
+    const expensesByMonth = Array(12).fill(0);
+
+    transactions.forEach(transaction => {
+      const month = new Date(transaction.date).getMonth();
+      if (transaction.type === 'income') {
+        incomeByMonth[month] += transaction.amount;
+      } else {
+        expensesByMonth[month] += Math.abs(transaction.amount);
+      }
+    });
+
+    return {
+      labels: months,
+      income: incomeByMonth,
+      expenses: expensesByMonth
+    };
+  };
+
+  // Calculate quick stats
+  const calculateQuickStats = () => {
+    const monthlyBudget = 3500; // You can make this dynamic
+    const budgetUsed = dashboardData.summary.totalExpenses > 0 
+      ? Math.min(100, (dashboardData.summary.totalExpenses / monthlyBudget) * 100)
+      : 0;
+    
+    const savingsRate = dashboardData.summary.totalIncome > 0
+      ? (dashboardData.summary.monthlySavings / dashboardData.summary.totalIncome) * 100
+      : 0;
+
+    const transactionsThisMonth = dashboardData.recentTransactions.length;
+
+    return {
+      monthlyBudget,
+      budgetUsed: Math.round(budgetUsed),
+      savingsRate: Math.round(savingsRate),
+      transactionsThisMonth
+    };
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const quickStats = calculateQuickStats();
+
+  // Chart data (same as your existing code)
   const spendingChartData = {
     labels: Object.keys(dashboardData.spendingByCategory),
     datasets: [
@@ -113,6 +263,31 @@ const Dashboard = () => {
       }
     }
   };
+
+  if (loading) {
+    return (
+      <div className="dashboard-page">
+        <div className="container">
+          <div className="loading">Loading dashboard data...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="dashboard-page">
+        <div className="container">
+          <div className="error-message">
+            <p>{error}</p>
+            <button onClick={fetchDashboardData} className="btn-retry">
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="dashboard-page">
@@ -195,25 +370,25 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/*Stats*/}
+          {/* Quick Stats */}
           <div className="quick-stats">
             <h3>Quick Stats</h3>
             <div className="stats-list">
               <div className="stat-item">
                 <span className="stat-label">Monthly Budget</span>
-                <span className="stat-value">$3,500</span>
+                <span className="stat-value">${quickStats.monthlyBudget}</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Budget Used</span>
-                <span className="stat-value">72%</span>
+                <span className="stat-value">{quickStats.budgetUsed}%</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Savings Rate</span>
-                <span className="stat-value">42%</span>
+                <span className="stat-value">{quickStats.savingsRate}%</span>
               </div>
               <div className="stat-item">
                 <span className="stat-label">Transactions This Month</span>
-                <span className="stat-value">24</span>
+                <span className="stat-value">{quickStats.transactionsThisMonth}</span>
               </div>
             </div>
           </div>

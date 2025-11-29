@@ -1,11 +1,8 @@
+// backend/models/Transaction.js
 const mongoose = require('mongoose');
 
 const transactionSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-  },
+  // Remove userId requirement for now, add it later when you have auth
   amount: {
     type: Number,
     required: true
@@ -29,7 +26,7 @@ const transactionSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true //created at , deleted at , updated at
+  timestamps: true
 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);
