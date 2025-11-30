@@ -272,6 +272,7 @@ const handleSubmit = async (e) => {
 
 if (error) {
   return (
+    <div className="ml-64 p-6">
     <div className="transactions-page">
       <div className="container">
         <div className="error-message">
@@ -282,9 +283,11 @@ if (error) {
         </div>
       </div>
     </div>
+    </div>
   );
 }
   return (
+    <div className="ml-64 p-6">
     <div className="transactions-page">
       <div className="container">
         {/* Header with Add Button */}
@@ -530,6 +533,7 @@ if (error) {
           </table>
         </div>
       </div>
+    </div>
     </div>
   );
 };

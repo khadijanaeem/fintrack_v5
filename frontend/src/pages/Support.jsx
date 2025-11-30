@@ -1,5 +1,6 @@
-/*import Image from "../components/Image";
-*/
+import QR from "../components/Image/QR_CODE.jpeg";
+
+
 export default function Support() {
   return (
     <div className="max-w-3xl mx-auto bg-white shadow-lg p-8 rounded-xl">
@@ -13,12 +14,13 @@ export default function Support() {
       </p>
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
 
         {/* QR Payments */}
-        <div className="border p-6 rounded-xl bg-gray-50">
-          <h2 className="text-xl font-semibold mb-4 text-center">Easypaisa / JazzCash</h2>
-          <img src="/qr-easypaisa.png" alt="QR" className="w-48 mx-auto mb-4" />
+        <div className="border p-5 rounded-xl bg-gray-50">
+          <h2 className="text-xl font-semibold mb-4 text-center">Easypaisa </h2>
+         
+<img src={QR} alt="QR"  className="w-40 mx-auto mb-4" />
           
           <p className="text-center">
             <strong>Number:</strong> 03454543715 <br />

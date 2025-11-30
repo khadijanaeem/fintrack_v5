@@ -481,6 +481,7 @@ tbody tr:hover {
   padding: 30px 20px;
   display: flex;
   flex-direction: column;
+  position : fixed;
 }
 
 .logo {
