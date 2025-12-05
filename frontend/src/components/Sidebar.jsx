@@ -11,6 +11,7 @@ export default function Sidebar() {
         <Link to="/budget" className="hover:text-gray-300">Budget</Link>
         <Link to="/support" className="hover:text-gray-300">Support / Donate</Link>
       </nav>
+      
     </div>
   );
 }

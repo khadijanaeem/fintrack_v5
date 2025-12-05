@@ -1,0 +1,307 @@
+/* ===================== Global Reset and Fonts ===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f0f4f8;
+  color: #333;
+  transition: all 0.3s ease;
+}
+
+/* Dark mode */
+.dark-mode {
+  background: #1f2937;
+  color: #f4f4f4;
+}
+
+/* ===================== Header ===================== */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 40px;
+  background: linear-gradient(90deg, #4b79a1, #283e51);
+  color: #fff;
+  border-radius: 0 0 15px 15px;
+  flex-wrap: wrap;
+}
+
+header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+}
+
+header button {
+  margin-left: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ff7f50;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+header button:hover {
+  background-color: #ff5722;
+}
+
+/* ===================== Container ===================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* ===================== Home Section ===================== */
+.home-intro {
+  text-align: center;
+  padding: 60px 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 20px;
+  margin: 30px auto;
+  max-width: 900px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.home-intro h1 {
+  font-size: 3rem;
+  margin-bottom: 20px;
+}
+
+.home-intro p {
+  font-size: 1.3rem;
+  line-height: 1.8;
+}
+
+/* ===================== Buttons ===================== */
+.btn {
+  padding: 12px 25px;
+  margin: 10px 5px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(90deg, #ff7f50, #ff4500);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* ===================== Forms ===================== */
+form {
+  background: white;
+  padding: 30px 25px;
+  border-radius: 15px;
+  max-width: 400px;
+  margin: 40px auto;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+form h2 {
+  margin-bottom: 25px;
+  color: #4b79a1;
+  text-align: center;
+}
+
+form input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+form input:focus {
+  outline: none;
+  border-color: #4b79a1;
+}
+
+/* ===================== Footer ===================== */
+footer {
+  background: linear-gradient(90deg, #4b79a1, #283e51);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  margin-top: 50px;
+  border-radius: 15px 15px 0 0;
+}
+
+footer a {
+  color: #ff7f50;
+  text-decoration: underline;
+}
+
+/* ===================== Admin Dashboard ===================== */
+.admin-container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 20px;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(90deg, #4b79a1, #283e51);
+  color: white;
+  padding: 20px 30px;
+  border-radius: 15px;
+  flex-wrap: wrap;
+}
+
+.admin-header h1 {
+  font-size: 2rem;
+}
+
+.logout-btn {
+  background: #ff7f50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: #ff4500;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* Intro Section */
+.admin-intro {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 25px 20px;
+  border-radius: 15px;
+  margin: 20px 0;
+  text-align: center;
+  font-size: 1.2rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* Stats Section */
+.admin-stats {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.admin-stats h2 {
+  background: linear-gradient(90deg, #ff7f50, #ff4500);
+  color: white;
+  padding: 15px 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* User Table */
+.admin-user-list {
+  margin: 30px 0;
+  overflow-x: auto;
+}
+
+.admin-user-list h3 {
+  margin-bottom: 15px;
+}
+
+.user-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.user-table th, .user-table td {
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.user-table th {
+  background: #4b79a1;
+  color: white;
+}
+
+.user-table tr:nth-child(even) {
+  background: #f4f4f4;
+}
+
+.user-table tr:hover {
+  background: #dfe6fd;
+}
+
+/* Notes / Quick Actions */
+.admin-notes {
+  margin: 30px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+.admin-notes h3 {
+  margin-bottom: 10px;
+}
+
+.admin-notes ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+/* Responsive Admin Dashboard */
+@media (max-width: 768px) {
+  .home-intro h1 {
+    font-size: 2.2rem;
+  }
+
+  .home-intro p {
+    font-size: 1rem;
+  }
+
+  header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+  }
+  
+  form {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+  }
+
+  .admin-intro, .admin-notes, .admin-stats {
+    margin: 15px 10px;
+    text-align: center;
+  }
+
+  .user-table {
+    font-size: 0.9rem;
+  }
+
+  .logout-btn {
+    width: 100%;
+    padding: 12px 0;
+  }
+}
