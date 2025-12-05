@@ -17,11 +17,12 @@ const mongodbURL=process.env.MONGODB_URI ;
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(mongodbURL, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000, // 10 seconds
-    });
+    await mongoose.connect(process.env.MONGODB_URI);
+   // await mongoose.connect(mongodbURL, {
+     // useNewUrlParser: true,
+    //  useUnifiedTopology: true,
+      //serverSelectionTimeoutMS: 10000, // 10 seconds
+   // });
     console.log('MongoDB Atlas connected successfully');
   } catch (error) {
     console.error('MongoDB connection failed:', error.message);
