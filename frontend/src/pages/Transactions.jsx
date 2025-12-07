@@ -55,7 +55,6 @@ const Transactions = () => {
   // ];
 
   const [transactions, setTransactions] = useState([]);
-  
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showForm, setShowForm] = useState(false);
@@ -97,7 +96,7 @@ const Transactions = () => {
         id: transaction._id,
         date: new Date(transaction.date).toISOString().split('T')[0], // Format as YYYY-MM-DD
         description: transaction.description,
-        category: transaction.categoryId ? `Category-${transaction.categoryId}` : 'General',
+        category: transaction.category,
         amount: amount,
         type: transaction.type
       };
@@ -175,7 +174,7 @@ const handleSubmit = async (e) => {
       description: newTransaction.description,
       type: newTransaction.type,
       date: new Date(newTransaction.date).toISOString(),
-      categoryId: newTransaction.category,
+      category: newTransaction.category,
        userId: "65a1b2c3d4e5f67890123456"
     };
 
